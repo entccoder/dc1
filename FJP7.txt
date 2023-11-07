@@ -1,0 +1,301 @@
+#include <p18f4550.h> 
+#include <stdio.h>
+
+#pragma config PLLDIV = 5
+#pragma config CPUDIV = OSC1_PLL2
+#pragma config USBDIV = 2
+#pragma config FOSC = HSPLL_HS
+#pragma config VREGEN = ON
+#pragma config WDT = OFF
+#pragma config PBADEN = OFF
+#pragma config LVP = OFF
+
+#define LCD_DATA PORTD 
+#define ctrl PORTC
+#define en PORTCbits.RC2
+#define rw PORTCbits.RC1
+#define rs PORTCbits.RC0
+#define BUSY PORTDbits.RD7
+
+void LCD_Busy(void);
+void LCD_cmd(unsigned char ord);
+void init_LCD(void);
+void LCD_write(unsigned char data);
+void LCD_write_string(static char *str);
+void display_string_LCD(static char *pstring1);
+
+void myMsDelay (unsigned int time)
+{
+	unsigned int i, j;
+	for(i=0;i<time;i++)
+	{
+	    for(j=0;j<710;j++);
+	}
+}
+
+void PORTs_init(void)
+{
+	INTCON2bits.RBPU = 0;
+	TRISB = 0X0F;
+	TRISD = 0x00;
+	TRISC = 0x00;
+	ADCON1 = 0x0E;
+}
+
+void main(void)
+{
+	char msg1[] = "i2it";
+	char msg2[] = "KEYPAD TEST";
+	char msg3[] = "Press Key";
+	char msg4[] = "Pressed Key:";
+
+	int key;
+	PORTs_init(); 
+	init_LCD();
+	LCD_write_string(msg1);
+	LCD_cmd (0xC0);
+	LCD_write_string(msg2);
+	myMsDelay(350);
+	LCD_cmd (0x01);
+	LCD_write_string(msg3);
+	LCD_cmd (0xC0);
+	LCD_write_string(msg4);
+	myMsDelay(350);
+
+	while(1)
+	{
+		PORTB = 0xE0;
+		myMsDelay(10);
+
+		switch(PORTB & 0x0F)
+		{
+			case 0x0E:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x0E)
+				{
+					key='0';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				} 
+			break;
+
+			case 0x0D:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0D)
+				{
+					key='4';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				} 
+			break;
+
+			case 0x0B:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0B)
+				{
+					key='8';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x07:
+				myMsDelay (100);
+				if((PORTB & 0x0F)==0x07)
+				{
+					key='C';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+		}
+
+		PORTB = 0xD0;
+		myMsDelay(10);
+
+		switch(PORTB & 0x0F)
+		{
+			case 0x0E:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0E)
+				{
+					key='1';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x0D:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0D)
+				{
+					key='5';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x0B:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x0B)
+				{ 
+					key='9';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				} 
+			break;
+
+			case 0x07:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x07)
+				{ 
+					key='D';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				} 
+			break;
+		}
+
+		PORTB = 0xB0;
+		myMsDelay(10);
+		switch(PORTB & 0x0F)
+		{
+			case 0x0E:
+				myMsDelay (100);
+				if((PORTB & 0x0F)==0x0E)
+				{
+					key='2';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x0D:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x0D)
+				{
+					key='6';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x0B:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0B)
+				{
+					key='A';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x07:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x07)
+				{
+					key='E';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+		}
+
+		PORTB = 0x70;
+		myMsDelay(100);
+		switch(PORTB & 0x0F)
+		{
+			case 0x0E:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x0E)
+				{
+					key='3';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x0D:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x0D)
+				{
+					key='6';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				} 
+			break;
+
+			case 0x0B:
+				myMsDelay (100);
+				if((PORTB & 0x0F) == 0x0B)
+				{
+					key='B';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+
+			case 0x07:
+				myMsDelay(100);
+				if((PORTB & 0x0F) == 0x07)
+				{
+					key='F';
+					LCD_cmd(0xCC);
+					LCD_write(key);
+				}
+			break;
+		}
+	}
+}
+
+void display_string_LCD(static char *pstring1)
+{
+	int count=0, len;
+	TRISC = 0x00;
+	TRISD = 0x00;
+	LCD_write_string(pstring1);
+	myMsDelay(15);
+}
+void init_LCD(void)
+{
+	LCD_cmd(0x38);
+	myMsDelay(15);
+	LCD_cmd(0x01);
+	myMsDelay(15);
+	LCD_cmd(0x06);
+	myMsDelay(15);
+	LCD_cmd(0x0C);
+	myMsDelay(15);
+	LCD_cmd(0x80);
+	myMsDelay(15);
+}
+void LCD_cmd(unsigned char ord)
+{
+	LCD_DATA = ord;
+	rs = 0;
+	rw = 0;
+	en = 1;
+	myMsDelay(15);
+	en = 0;
+	myMsDelay(15);
+}
+void LCD_write(unsigned char data)
+{
+	LCD_DATA = data;
+	rs = 1;
+	rw = 0;
+	en = 1;
+	myMsDelay(15);
+	en = 0;
+	myMsDelay(15);
+}
+void LCD_write_string(static char *str)
+{
+	unsigned int i = 0;
+	while(str[i] != '\0')
+	{
+		LCD_write(str[i]);
+		myMsDelay(15);
+		i++;
+	}
+}
