@@ -1,0 +1,72 @@
+#include<P18F4550.h>
+
+#pragma config FOSC = HS
+#pragma config WDT = OFF
+#pragma config LVP = OFF
+#pragma config PBADEN = OFF
+
+#define RS PORTCbits.RC0
+#define RW PORTCbits.RC1
+#define EN PORTCbits.RC2
+
+void LCD_data(unsigned char data);
+void LCD_cmd(unsigned char cmd);
+void LCD_init(void);
+void delay(unsigned int time);
+
+void main(void)
+{
+	TRISD = 0x00;
+    TRISC = 0x00;
+    PORTD =0X00;
+	LCD_init();
+
+    LCD_data('L');
+    delay(25);
+    LCD_data('C');
+    delay(25);
+	LCD_data('D');
+    delay(25);
+}
+
+void LCD_data(unsigned char data)
+{
+   PORTD = data;
+   RS = 1;
+   RW = 0;
+   EN = 1;
+   delay(25);
+   EN =0;
+}
+
+void LCD_cmd(unsigned char cmd)
+{
+   PORTD=cmd;
+   RS = 0;
+   RW = 0;
+   EN = 1;
+   delay(25);
+   EN =0;
+}
+
+void LCD_init()
+{
+   LCD_cmd(0x38);
+   delay(25);
+   LCD_cmd(0x01);
+   delay(25);
+   LCD_cmd(0x06);
+   delay(25);   
+   LCD_cmd(0x0C);
+   delay(25);
+   LCD_cmd(0x80);
+   delay(25);
+}
+void delay(unsigned int time)
+{
+	unsigned int i,j;
+	for(i=0;i<time;i++)
+	{
+	for(j=0;j<275;j++);
+	}
+}
